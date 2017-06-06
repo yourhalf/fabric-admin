@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>BlockChain Member</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
+  <script src="/jquery/dist/jquery.min.js"></script>
+  <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div style="margin-top:20px"></div>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-8">
+    	<div class="panel panel-default">
+	      <div class="panel-heading">BlockChain Member</div>
+	      <div class="panel-body">
+	      	<form>
+	      	  <div class="form-group">
+			    <label for="initResult">Blockchain 초기화 및 채널 생성</label>
+			    <a href="javascript:initBlockChain();" class="btn btn-info form-control">Run</a>
+			    <input type="text" class="form-control" id="initResult" name="initResult" placeholder="실행 결과" readonly="readonly";></input>
+			  </div>
+			  <div class="form-group">
+			    <label for="memberId">BlockChain Member 등록</label>
+			    <input type="text" class="form-control" id="memberId" name="memberId" placeholder="멤버 ID 입력"></input>
+			    <input type="text" class="form-control" id="secret" name="secret" placeholder="Secret 입력"></input>
+			    <input type="text" class="form-control" id="result" name="result" placeholder="실행 결과" readonly="readonly";></input>
+			  	<div class="col-sm-3"></div>
+			  	 <div class="form-group">
+			  	 <a href="javascript:register();" class="btn btn-success form-control" >Register (Secret 가져오기)</a>
+			  	 <div class="col-sm-3"></div>
+			  	 <a href="javascript:enroll();" class="btn btn-info form-control" >Enroll (등록)</a>
+			  	 </div>
+			  </div>
+			  <div class="form-group">
+			  	<div class="form-group">
+			    <label for="qMemberId">BlockChain Member 확인(로그인)</label>
+			    <input type="text" class="form-control" id="qMemberId" name="qMemberId" placeholder="멤버 ID 입력"></input>
+			    <input type="text" class="form-control" id="qResult" name="qResult" placeholder="실행 결과" readonly></input>
+				<div class="col-sm-3"></div>
+			  	 <a href="javascript:getUser();" class="btn btn-info form-control" >확인</a>
+			  	 </div>
+			  </div>
+			</form>
+	      </div>
+	    </div>
+    </div>
+    <div class="col-sm-2"></div>
+  </div>
+</div>
+
+</body>
+
+<script type="text/javascript">
+
+	function initBlockChain(){
+		$('#initResult').val('Secret 가져오는 중...');
+		$.ajax({
+			type : "GET", 
+			url: '/init', 
+	       dataType : 'json',
+	       success : function(result) {
+	        	//alert(result.msg);
+	       	$('#initResult').val('블록체인 초기화 완료');
+	       	$('#initResult').css('color', 'blue');
+		       $('#initResult').css('font-weight', 'bold');
+				},
+	       error: function(xhr) {
+	       	alert(JSON.parse(xhr.responseText).error);
+	       	$('#initResult').val('블록체인 초기화 실패');
+	       	$('#initResult').css('color', 'red');
+		       $('#initResult').css('font-weight', 'bold');
+	       	}
+		});
+	}
+
+	function register(){
+		var memberId = $('#memberId').val();
+		
+		if(memberId==""){
+			alert("Member ID 입력 필수"); 
+			$('#memberId').focus();  
+		 	return false;
+		}
+		
+		$('#result').val('Secret 가져오는 중...');
+		$('#result').css('color', 'black');
+
+		$.ajax({
+	       type : 'GET', 
+			url: '/register', 
+	       dataType : 'jsonp',
+	       jsonp : 'callback',
+	       data : 'memberId='+memberId,
+	       success : function(result) {
+	       	$('#secret').val(result.msg);
+	       	$('#result').val(memberId + " - Registered, secret - " + result.msg);
+	       	$('#result').css('color', 'blue');
+				},
+	       error: function(xhr) {
+	       	$('#result').val('Secret 생성 실패');
+	       	$('#result').css('color', 'red');
+	       	}
+		});
+	}
+
+	function enroll(){
+		var memberId = $('#memberId').val();
+		var secret = $('#secret').val();
+		if(memberId==""){
+			alert("Member ID 입력 필수"); 
+			$('#memberId').focus();  
+		 	return false;
+		}
+		if(secret==""){
+			alert("secret 입력 필수"); 
+			$('#secret').focus();
+			return false;
+		}
+		$('#result').val('등록 진행 중...');
+		$('#result').css('color', 'black');
+		
+		$.ajax({
+			type : "POST", 
+			url: '/enroll', 
+	       dataType : 'json',
+	       data : 'memberId='+memberId+'&secret='+secret,
+	       success : function(result) {
+	        	//alert(result.msg);
+	       	$('#result').val('블록체인 멤버 등록 완료');
+	       	$('#result').css('color', 'blue');
+				},
+	       error: function(xhr) {
+	       	alert(JSON.parse(xhr.responseText).error);
+	       	$('#result').val('블록체인 멤버 등록 실패');
+	       	$('#result').css('color', 'red');
+	       	}
+		});
+	}
+	
+	function getUser(){
+		var memberId = $('#qMemberId').val();
+
+		if(memberId=="") 
+			{alert("ID 입력값 확인"); 
+			 $('#qMemberId').focus();
+			 return false;};
+
+		$('#qResult').val('조회 진행 중...');
+		$('#qResult').css('color', 'black');
+		
+		$.ajax({
+			type : "POST", 
+			url: '/getUser', 
+	       dataType : 'json',
+	       data : 'memberId='+memberId,
+	       success : function(result) {
+	        	//alert(result.msg);
+		        	if(result.msg!=''){
+		       		$('#qResult').val('블록체인 멤버 확인 성공');
+		       		$('#qResult').css('color', 'blue');
+		       	}else{
+		       		$('#qResult').val('블록체인 멤버 확인 실패');
+		       		$('#qResult').css('color', 'red');
+		       	    }
+				},
+	       error: function(xhr) {
+	       	alert(JSON.parse(xhr.responseText).error);
+	       	$('#qResult').val('블록체인 멤버 확인 실패');
+	       	}
+		});
+	}
+	
+</script>
+</html>

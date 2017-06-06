@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>BlockChain ChainCode</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
+  <script src="/jquery/dist/jquery.min.js"></script>
+  <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div style="margin-top:20px"></div>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-8">
+    	<div class="panel panel-default">
+	      <div class="panel-heading">BlockChain ChainCode</div>
+	      <div class="panel-body">
+	      	<form>
+	      	  <div class="form-group">
+			    <label for="invoker">Invoker</label>
+			    <input type="text" class="form-control" id="invoker" name="invoker" placeholder="Invoker 입력"></input>
+			  </div>
+	      	  <div class="form-group">
+			    <label for="instChainCodeId">Chain Code Install</label>
+			    <input type="text" class="form-control" id="instChainCodeId" name="instChainCodeId" placeholder="Chain Code ID 입력"></input>
+			    <input type="text" class="form-control" id="instChainCodePath" name="instChainCodePath" placeholder="Chain Code Path 입력"></input>
+			    <input type="text" class="form-control" id="instChainCodeVer" name="instChainCodeVer" placeholder="Chain Code Version 입력"></input>
+			    <input type="text" class="form-control" id="instChainCodeResult" name="instChainCodeResult" placeholder="실행 결과" readonly="readonly";></input>
+			  	<a href="javascript:instChainCode();" class="btn btn-info form-control">Run</a>
+			  </div>
+			  <div class="form-group">
+			    <label for="initChainCodeId">Chain Code instantiate</label>
+				<input type="radio" name="initType" id="initType" value="instantiate"> Instantiate
+				<input type="radio" name="initType" id="initType" value="upgrade" checked="checked"> Upgrade
+			    <input type="text" class="form-control" id="initChainCodeId" name="initChainCodeId" placeholder="Chain Code ID 입력"></input>
+			    <input type="text" class="form-control" id="initChainCodePath" name="initChainCodePath" placeholder="Chain Code Path 입력"></input>
+			    <input type="text" class="form-control" id="initChainCodeVer" name="initChainCodeVer" placeholder="Chain Code Version 입력"></input>
+			    <input type="text" class="form-control" id="initArgs" name="initArgs" placeholder="Chain Code Args 입력"></input>
+			    <input type="text" class="form-control" id="initChainCodeResult" name="initChainCodeResult" placeholder="실행 결과" readonly="readonly";></input>
+			    <a href="javascript:initChainCode();" class="btn btn-info form-control">Run</a>
+			  </div>
+			</form>
+	      </div>
+	    </div>
+    </div>
+    <div class="col-sm-2"></div>
+  </div>
+</div>
+
+</body>
+
+<script type="text/javascript">
+
+	function instChainCode(){
+	
+		var invoker = $('#invoker').val();
+		var chainCodeId = $('#instChainCodeId').val();
+		var chainCodePath = $('#instChainCodePath').val();
+		var chainCodeVer = $('#instChainCodeVer').val();
+		
+		if(chainCodeId==""){
+			alert("Chain Code ID 입력 필수"); 
+			$('#instChainCodeId').focus();  
+		 	return false;
+		}
+		if(chainCodePath==""){
+			alert("Chain Code Path 입력 필수"); 
+			$('#instChainCodePath').focus();  
+		 	return false;
+		}
+		if(chainCodeVer==""){
+			alert("Chain Code Version 입력 필수"); 
+			$('#instChainCodeVer').focus();  
+		 	return false;
+		}
+	
+		$('#instChainCodeResult').val('Chain Code Install 중...');
+		$('#instChainCodeResult').css('color', 'black');
+		$.ajax({
+			type : 'POST', 
+			url: '/instChainCode', 
+	       dataType : 'json',
+	       data : 'chainCodeId='+chainCodeId+'&chainCodePath='+chainCodePath+'&chainCodeVer='+chainCodeVer+'&invoker='+invoker,
+	       success : function(result) {
+	        	//alert(result.msg);
+	       	$('#instChainCodeResult').val('Chain Code Install 완료');
+	       	$('#instChainCodeResult').css('color', 'blue');
+				},
+	       error: function(xhr) {
+	       	alert(JSON.parse(xhr.responseText).error);
+	       	$('#instChainCodeResult').val('Chain Code Install 실패');
+	       	$('#instChainCodeResult').css('color', 'red');
+	       	}
+		});
+	}
+	
+	function initChainCode(){
+	
+		var invoker = $('#invoker').val();
+		var chainCodeId = $('#initChainCodeId').val();
+		var chainCodePath = $('#initChainCodePath').val();
+		var chainCodeVer = $('#initChainCodeVer').val();
+		var args = $('#initArgs').val();
+		var initType = $("input[type=radio][name=initType]:checked").val();
+		
+		if(chainCodeId==""){
+			alert("Chain Code ID 입력 필수"); 
+			$('#initChainCodeId').focus();  
+		 	return false;
+		}
+		if(chainCodePath==""){
+			alert("Chain Code Path 입력 필수"); 
+			$('#initChainCodePath').focus();  
+		 	return false;
+		}
+		if(chainCodeVer==""){
+			alert("Chain Code Version 입력 필수"); 
+			$('#initChainCodeVer').focus();  
+		 	return false;
+		}
+	
+		$('#initChainCodeResult').val('Chain Code Instantiate 중...');
+		$('#initChainCodeResult').css('color', 'black');
+		$.ajax({
+			type : 'POST', 
+			url: '/initChainCode', 
+	       dataType : 'json',
+	       data : 'chainCodeId='+chainCodeId+'&chainCodePath='+chainCodePath+'&chainCodeVer='+chainCodeVer+'&args='+args+'&initType='+initType+'&invoker='+invoker,
+	       success : function(result) {
+	        	//alert(result.msg);
+	       	$('#initChainCodeResult').val('Chain Code Instantiate 완료');
+	       	$('#initChainCodeResult').css('color', 'blue');
+				},
+	       error: function(xhr) {
+	       	alert(JSON.parse(xhr.responseText).error);
+	       	$('#initChainCodeResult').val('Chain Code Instantiate 실패');
+	       	$('#initChainCodeResult').css('color', 'red');
+	       	}
+		});
+	}
+</script>
+</html>

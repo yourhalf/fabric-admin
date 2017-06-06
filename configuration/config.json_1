@@ -1,0 +1,24 @@
+{
+  "runPort": "5100",
+  "chainName": "mychannel",
+  "mspId": "Org1MSP",
+  "keyValStore": "/keyValStore_fabricClientOrg1",
+  "adminUrl": "http://10.250.46.57:4500",
+  "caserver": {
+	  "ca_url":"http://10.250.46.64:7054"
+  },
+  "orderer": {
+	  "orderer_url":"grpc://10.250.46.64:7050"
+  },
+  "peers": [
+    {
+    	"peer_url":"grpc://10.250.46.237:7051"
+    }
+  ],
+  "events": [
+    {
+    	"event_url":"grpc://10.250.46.237:7053"
+    }
+  ],
+  "logLevel" : "debug"
+}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>BlockChain Transaction</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
+  <script src="/jquery/dist/jquery.min.js"></script>
+  <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div style="margin-top:20px"></div>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-8">
+    	<div class="panel panel-primary">
+	      <div class="panel-heading">BlockChain Transaction</div>
+	      <div class="panel-body">
+	      	<form>
+	      	  <div class="form-group">
+			    <label for="invoker">Invoker</label>
+			    <input type="text" class="form-control" id="invoker" name="invoker" placeholder="Invoker 입력"></input>
+			  </div>
+			  <div class="form-group">
+			    <label for="qChainCodeId">Query</label>
+			    <input type="text" class="form-control" id="qChainCodeId" name="qChainCodeId" placeholder="Chain Code ID 입력"></input>
+			    <input type="text" class="form-control" id="qChainCodeVer" name="qChainCodeVer" placeholder="Chain Code Version 입력(생략 가능)"></input>
+			    <input type="text" class="form-control" id="qFcn" name="qFcn" placeholder="Query 함수명"></input>
+			    <input type="text" class="form-control" id="qArgs" name="qArgs" placeholder="파라미터 입력 (예: arg1 arg2 arg3 ...)"></input>
+			    <input type="text" class="form-control" id="qResult" name="qResult" placeholder="실행 결과" readonly></input>
+			  	 <a href="javascript:query();" class="btn btn-info form-control">Run</a>
+			  </div>
+			  <div class="form-group">
+			    <label for="iChainCodeId">Invoke</label>
+			    <input type="text" class="form-control" id="iChainCodeId" name="iChainCodeId" placeholder="Chain Code ID 입력"></input>
+			    <input type="text" class="form-control" id="iChainCodeVer" name="iChainCodeVer" placeholder="Chain Code Version 입력(생략 가능)"></input>
+			    <input type="text" class="form-control" id="iFcn" name="iFcn" placeholder="Invoke 함수명"></input>
+			    <input type="text" class="form-control" id="iArgs" name="iArgs" placeholder="파라미터 입력 (예: arg1 arg2 arg3 ...)"></input>
+			    <input type="text" class="form-control" id="iResult" name="iResult" placeholder="실행 결과" readonly></input>
+			  	 <a href="javascript:invoke();" class="btn btn-info form-control">Run</a>
+			  </div> 
+			</form>
+	      </div>
+	    </div>
+    </div>
+    <div class="col-sm-2"></div>
+  </div>
+</div>
+
+</body>
+
+<script type="text/javascript">
+
+	function query(){
+		var invoker = $('#invoker').val();
+		var fcn = $('#qFcn').val();
+		var args = $('#qArgs').val();
+		var chainCodeId = $('#qChainCodeId').val();
+		var chainCodeVer = $('#qChainCodeVer').val();
+		
+		if(invoker=="") {alert("Invoker 입력 필수"); return false;}
+		
+		$('#qResult').val('Query 진행 중...');
+		
+		$.ajax({
+			type : "POST", 
+			url: '/query', 
+	       dataType : 'json',
+	       data : 'invoker='+invoker+'&fcn='+fcn+'&args='+args+'&chainCodeId='+chainCodeId+'&chainCodeVer='+chainCodeVer,
+	       success : function(result) {
+//	        	alert(result.msg);
+	        	$('#qResult').val(result.msg);
+				},
+	       error: function(xhr, resp, text) {
+	       	alert(JSON.parse(xhr.responseText).error);
+	       	$('#qResult').val(JSON.parse(xhr.responseText).error);
+	       	}
+		});
+	}
+
+	function invoke(){
+		var invoker = $('#invoker').val();
+		var fcn = $('#iFcn').val();
+		var args = $('#iArgs').val();
+		var chainCodeId = $('#iChainCodeId').val();
+		var chainCodeVer = $('#iChainCodeVer').val();
+		
+		if(invoker=="") {alert("Invoker 입력 필수"); return false;}
+		
+		$('#iResult').val('Invoke 진행 중...');
+		
+		$.ajax({
+			type : "POST", 
+			url: '/invoke', 
+	       dataType : 'json',
+	       data : 'invoker='+invoker+'&fcn='+fcn+'&args='+args+'&chainCodeId='+chainCodeId+'&chainCodeVer='+chainCodeVer,
+	       success : function(result) {
+//	        	alert(result.msg);
+	        	$('#iResult').val(result.msg);
+				},
+	       error: function(xhr, resp, text) {
+	       	alert(JSON.parse(xhr.responseText).error);
+	       	$('#iResult').val(JSON.parse(xhr.responseText).error);
+	       	}
+		});
+	}
+	
+</script>
+</html>

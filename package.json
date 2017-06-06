@@ -1,0 +1,15 @@
+{
+  "name": "FabricClient",
+  "version": "0.0.1",
+  "dependencies": {
+    "prompt": "*",
+    "express": "3.2.6",
+    "ejs": "*",
+    "bootstrap": "3.3.7",
+    "fabric-client": "1.0.0-snapshot.15",
+    "fabric-ca-client": "1.0.0-snapshot.15",
+    "date-utils": "latest",
+    "express-session": "latest",
+    "winston" : "latest"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "clientPort": "4500",
+  "chainName": "mychannel",
+  "mspId": "Org1MSP",
+  "registrar": {
+    "name": "admin",
+    "secret": "adminpw"
+  },
+  "keyValStore": "/keyValAdmin_org1",
+  "caserver": {
+    "ca_url": "http://127.0.0.1:7054"
+  },
+  "orderer": {
+    "orderer_url": "grpc://127.0.0.1:7050"
+  },
+  "peers": [{
+      "peer_url": "grpc://127.0.0.1:7051"
+    },
+    {
+      "peer_url": "grpc://127.0.0.1:8051"
+    }
+  ],
+  "events": [{
+      "event_url": "grpc://127.0.0.1:7053"
+    }
+  ],
+  "logLevel": "debug"
+}
